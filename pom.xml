@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.opentestsystem.shared</groupId>
+    <artifactId>container-master</artifactId>
+    <name>Master POM for open test system shared Docker container definitions</name>
+    <version>3.0.2-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <properties>
+        <docker-maven-plugin.version>0.4.10</docker-maven-plugin.version>
+        <docker.image.prefix>fwsbac</docker.image.prefix>
+    </properties>
+
+    <modules>
+        <module>rabbit-image</module>
+        <module>redis-image</module>
+        <module>secure-tomcat-image</module>
+    </modules>
+
+    <licenses>
+        <license>
+            <name>AIR-License-1.0</name>
+            <url>http://www.smarterapp.org/documents/American_Institutes_for_Research_Open_Source_Software_License.pdf</url>
+            <distribution>repo</distribution>
+            <comments>Educational Online Test Delivery System Copyright (c) 2017 American Institutes for Research</comments>
+        </license>
+    </licenses>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.spotify</groupId>
+                    <artifactId>docker-maven-plugin</artifactId>
+                    <version>${docker-maven-plugin.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
+</project>
