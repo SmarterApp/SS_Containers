@@ -1,7 +1,7 @@
 # RabbitMQ Cluster Image
 This docker image definition provides a RabbitMQ Server cluster for use in Kubernetes.  It is designed to be used in a
 Kubernetes [StatefulSet](https://kubernetes.io/docs/tutorials/stateful-application/basic-stateful-set/) which will 
-persist the backing "Mnesia" filestore and provide consistent pod names for clustering.  This image and it's associated
+persist the backing "Mnesia" filestore and provide consistent pod names for clustering.  This image and its associated
 deployment are designed to be fault-tolerant.  If a single node goes down, there will be no service interruption while
 Kubernetes stands the replacement node back up.
 
