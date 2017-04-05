@@ -12,7 +12,7 @@ function findmaster() {
     master="${master//\"}"
   else
     #Check with leader election via service
-    master=$(curl http://${REDIS_SERVER_SERVICE_HOST}:4040/ | python -c 'import sys, json; print json.load(sys.stdin)["name"]')
+    master=$(curl --connect-timeout 3 http://${REDIS_SERVER_SERVICE_HOST}:4040/ | python -c 'import sys, json; print json.load(sys.stdin)["name"]')
     echo "Master from leader election via service: ${master}"
 
     if [[ -z ${master} ]]; then
@@ -36,10 +36,13 @@ function launchsentinel() {
   while true; do
     findmaster
 
-    redis-cli -h ${master} INFO
-    if [[ "$?" == "0" ]]; then
-      break
+    if [[ -n ${master} ]]; then
+      redis-cli -h ${master} INFO
+      if [[ "$?" == "0" ]]; then
+        break
+      fi
     fi
+
     echo "Connecting to master failed.  Waiting..."
     sleep 10
   done
@@ -47,8 +50,8 @@ function launchsentinel() {
   sentinel_conf=sentinel.conf
 
   echo "sentinel monitor mymaster ${master} 6379 2" > ${sentinel_conf}
-  echo "sentinel down-after-milliseconds mymaster 60000" >> ${sentinel_conf}
-  echo "sentinel failover-timeout mymaster 180000" >> ${sentinel_conf}
+  echo "sentinel down-after-milliseconds mymaster 10000" >> ${sentinel_conf}
+  echo "sentinel failover-timeout mymaster 60000" >> ${sentinel_conf}
   echo "sentinel parallel-syncs mymaster 1" >> ${sentinel_conf}
 
   redis-sentinel ${sentinel_conf} --protected-mode no
@@ -56,21 +59,25 @@ function launchsentinel() {
 
 function launchslave() {
   echo "Launching as Slave"
-  redis-cli -h ${master} INFO
-  if [[ "$?" != "0" ]]; then
-    slave_success=false
-    echo "Connecting to master failed.  Waiting..."
-    sleep 10
-    return
+
+  if [[ -n ${master} ]]; then
+    redis-cli -h ${master} INFO
+    if [[ "$?" == "0" ]]; then
+      sed -i "s/%master-ip%/${master}/" /redis-slave/redis.conf
+      sed -i "s/%master-port%/6379/" /redis-slave/redis.conf
+      redis-server /redis-slave/redis.conf --protected-mode no
+      return
+    fi
   fi
 
-  sed -i "s/%master-ip%/${master}/" /redis-slave/redis.conf
-  sed -i "s/%master-port%/6379/" /redis-slave/redis.conf
-  redis-server /redis-slave/redis.conf --protected-mode no
+  slave_success=false
+  echo "Connecting to master failed.  Waiting..."
+  sleep 10
 }
 
 if [[ ${SENTINEL} == "true" ]]; then
   launchsentinel
+  exit 0
 fi
 
 while true; do
