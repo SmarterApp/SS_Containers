@@ -4,12 +4,13 @@
     <groupId>org.opentestsystem.shared</groupId>
     <artifactId>container-master</artifactId>
     <name>Master POM for open test system shared Docker container definitions</name>
-    <version>3.0.2-SNAPSHOT</version>
+    <version>3.0.3-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <properties>
         <docker-maven-plugin.version>0.4.10</docker-maven-plugin.version>
         <docker.image.prefix>fwsbac</docker.image.prefix>
+        <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
     </properties>
 
     <modules>
@@ -37,6 +38,35 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>${maven-release-plugin.version}</version>
+                <configuration>
+                    <tagNameFormat>@{project.version}</tagNameFormat>
+                    <useReleaseProfile>false</useReleaseProfile>
+                    <releaseProfiles>release</releaseProfiles>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
+
+    <scm>
+        <connection>scm:git:https://github.com/SmarterApp/SS_Containers.git</connection>
+        <developerConnection>scm:git:git://github.com/SmarterApp/SS_Containers.git</developerConnection>
+        <url>https://github.com/SmarterApp/SS_Containers</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>central</id>
+            <name>airdev-releases</name>
+            <url>https://airdev.jfrog.io/airdev/libs-releases-local</url>
+        </repository>
+    </distributionManagement>
 
 </project>
