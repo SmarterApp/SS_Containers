@@ -9,6 +9,7 @@ FROM tomcat:7-jre7
 # Changed SHUTDOWN port and Command
 # Increased maxHttpHeaderSize to 65536
 # Set URIEncoding to UTF-8
+# Disable access logging
 ADD server.xml /usr/local/tomcat/conf/
 
 #Put more secured web.xml
@@ -16,6 +17,9 @@ ADD server.xml /usr/local/tomcat/conf/
 # Will not show server version info up on errors and exceptions
 # Added .vtt extension and mime-type
 ADD web.xml /usr/local/tomcat/conf/
+
+#Overwrite logging.properties to send Catalina logs to STDOUT
+ADD logging.properties /usr/local/tomcat/conf/
 
 #Remove version string from HTTP error messages
 #override ServerInfo.properties in catalina.jar
