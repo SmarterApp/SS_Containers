@@ -41,18 +41,18 @@ if [[ "$isRunning" == false ]]; then
     exit 1
 fi
 
-getMasterAddress masterAddr
-echo "Master addr: $masterAddr"
-if [[ -z ${masterAddr} ]]; then
-    echo "No master found"
-    exit 1
-fi
-
-isMasterDown masterDown
-echo "Is master down: $masterDown"
-if [[ "$masterDown" == true ]]; then
-    echo "Redis Sentinel is unable to contact Master"
-    exit 1
-fi
+#getMasterAddress masterAddr
+#echo "Master addr: $masterAddr"
+#if [[ -z ${masterAddr} ]]; then
+#    echo "No master found"
+#    exit 1
+#fi
+#
+#isMasterDown masterDown
+#echo "Is master down: $masterDown"
+#if [[ "$masterDown" == true ]]; then
+#    echo "Redis Sentinel is unable to contact Master"
+#    exit 1
+#fi
 
 exit 0

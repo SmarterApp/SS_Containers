@@ -40,18 +40,18 @@ if [[ "$isRunning" == false ]]; then
     exit 1
 fi
 
-isSlaveInstance isSlave
-echo "Is slave: $isSlave"
-if [[ "$isSlave" == false ]]; then
-    echo "Redis is a master instance"
-    exit 0
-fi
-
-isMasterLinkDown isLinkDown
-echo "Is link down: $isLinkDown"
-if [[ "$isLinkDown" == true ]]; then
-    echo "Redis Slave is unable to contact Master"
-    exit 1
-fi
+#isSlaveInstance isSlave
+#echo "Is slave: $isSlave"
+#if [[ "$isSlave" == false ]]; then
+#    echo "Redis is a master instance"
+#    exit 0
+#fi
+#
+#isMasterLinkDown isLinkDown
+#echo "Is link down: $isLinkDown"
+#if [[ "$isLinkDown" == true ]]; then
+#    echo "Redis Slave is unable to contact Master"
+#    exit 1
+#fi
 
 exit 0
