@@ -6,7 +6,7 @@
 
 function findmaster() {
   #First check with the sentinels
-  master=$(redis-cli -h ${REDIS_SENTINEL_SERVICE_HOST} -p ${REDIS_SENTINEL_SERVICE_PORT} --csv SENTINEL get-master-addr-by-name mymaster | tr ',' ' ' | cut -d' ' -f1)
+  master=$(timeout -t 3 redis-cli -h ${REDIS_SENTINEL_SERVICE_HOST} -p ${REDIS_SENTINEL_SERVICE_PORT} --csv SENTINEL get-master-addr-by-name mymaster | tr ',' ' ' | cut -d' ' -f1)
   echo "Master from sentinels: ${master}"
   if [[ -n ${master} ]]; then
     master="${master//\"}"
