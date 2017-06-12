@@ -4,7 +4,7 @@
     <groupId>org.opentestsystem.shared</groupId>
     <artifactId>container-master</artifactId>
     <name>Master POM for open test system shared Docker container definitions</name>
-    <version>3.0.4-SNAPSHOT</version>
+    <version>3.1.0.RELEASE</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -58,7 +58,7 @@
         <connection>scm:git:https://github.com/SmarterApp/SS_Containers.git</connection>
         <developerConnection>scm:git:git://github.com/SmarterApp/SS_Containers.git</developerConnection>
         <url>https://github.com/SmarterApp/SS_Containers</url>
-        <tag>HEAD</tag>
+        <tag>3.1.0.RELEASE</tag>
     </scm>
 
     <distributionManagement>
