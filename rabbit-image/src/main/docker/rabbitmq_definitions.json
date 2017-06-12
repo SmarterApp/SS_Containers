@@ -1,0 +1,8 @@
+{
+  "vhosts":[
+    {"name":"/"}
+  ],
+  "policies":[
+    {"vhost":"/","name":"ha","pattern":"", "definition":{"ha-mode":"exactly","ha-params":2,"ha-sync-mode":"automatic","ha-sync-batch-size":5}}
+  ]
+}
