@@ -4,12 +4,12 @@
     <groupId>org.opentestsystem.shared</groupId>
     <artifactId>container-master</artifactId>
     <name>Master POM for open test system shared Docker container definitions</name>
-    <version>3.0.4-SNAPSHOT</version>
+    <version>3.1.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <properties>
         <docker-maven-plugin.version>0.4.10</docker-maven-plugin.version>
-        <docker.image.prefix>fwsbac</docker.image.prefix>
+        <docker.image.prefix>smarterbalanced</docker.image.prefix>
         <maven-release-plugin.version>2.5.3</maven-release-plugin.version>
     </properties>
 
