@@ -46,18 +46,18 @@ class WkHtmlToPdfServer():
             options = json.loads(request.form.get('options', '{}'))
 
         # Evaluate argument to run with subprocess
-        args = ['wkhtmltopdf']
+        args = [u'wkhtmltopdf']
 
         # Add Global Options
         if options:
             for option, value in options.items():
-                args.append('--%s' % option)
+                args.append("--%s" % option)
                 if value:
-                    args.append('"%s"' % value)
+                    args.append('%s' % value)
 
         #Pipe source and output to/from STDIN/STDOUT
-        args.append('-')
-        args.append('-')
+        args.append(u'-')
+        args.append(u'-')
 
         cliProc = Popen(args, stdin=PIPE, stdout=PIPE)
         try:
