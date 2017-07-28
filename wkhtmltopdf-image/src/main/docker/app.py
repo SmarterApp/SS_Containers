@@ -1,6 +1,9 @@
 #! /usr/bin/env python
 import StringIO
 import json
+import logging
+import uuid
+from os import EX_OK
 from subprocess import Popen, PIPE
 
 from werkzeug.exceptions import HTTPException, NotFound
@@ -22,6 +25,10 @@ class WkHtmlToPdfServer():
             Rule('/', endpoint='generate_pdf'),
             Rule('/health', endpoint='health_check')
         ])
+        logging.basicConfig()
+        self.logger = logging.getLogger('WkHtmlToPdfServer')
+        #TODO allow environment to configure this
+        self.logger.setLevel(logging.INFO)
 
     """
     Generate a PDF from submitted HTML.
@@ -33,6 +40,9 @@ class WkHtmlToPdfServer():
         request_is_json = request.content_type.endswith('json')
         sourceStream = None
         options = None
+
+        traceId = request.headers.get('X-Trace-Id', default=uuid.uuid4())
+        self.logger.info("Received PDF request: %s", traceId)
 
         if request_is_json:
             # If a JSON payload is there, all data is in the payload
@@ -46,7 +56,7 @@ class WkHtmlToPdfServer():
             options = json.loads(request.form.get('options', '{}'))
 
         # Evaluate argument to run with subprocess
-        args = [u'wkhtmltopdf']
+        args = [u'wkhtmltopdf', u'-q']
 
         # Add Global Options
         if options:
@@ -68,10 +78,21 @@ class WkHtmlToPdfServer():
         except:
             cliProc.kill()
 
-        return Response(
+        response = Response(
             cliProc.stdout,
             mimetype='application/pdf',
         )
+
+        def on_response_close():
+            cliProc.wait()
+            exitCode = cliProc.returncode
+            if exitCode == EX_OK:
+                self.logger.info("PDF Generated successfully: %s", traceId)
+            else:
+                self.logger.info("PDF Generation failed: %s", traceId)
+        response.call_on_close(on_response_close)
+
+        return response
 
     """
     Respond to a health check request with a 200 Healthy status.
@@ -82,8 +103,7 @@ class WkHtmlToPdfServer():
     """
     Respond with 404 for unknown requests.
     """
-    @staticmethod
-    def error_404():
+    def error_404(self, request):
         return Response(status=404)
 
     """
