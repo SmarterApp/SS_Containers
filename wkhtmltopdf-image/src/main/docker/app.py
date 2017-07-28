@@ -1,13 +1,11 @@
 #! /usr/bin/env python
+import StringIO
 import json
-import os
-import tempfile
+from subprocess import Popen, PIPE
 
-from executor import execute
 from werkzeug.exceptions import HTTPException, NotFound
 from werkzeug.routing import Map, Rule
 from werkzeug.wrappers import Request, Response
-from werkzeug.wsgi import wrap_file
 
 """
 This python server is responsible for generating PDFs from HTML
@@ -33,50 +31,47 @@ class WkHtmlToPdfServer():
             return
 
         request_is_json = request.content_type.endswith('json')
+        sourceStream = None
+        options = None
 
-        with tempfile.NamedTemporaryFile(suffix='.html') as source_file:
+        if request_is_json:
+            # If a JSON payload is there, all data is in the payload
+            payload = json.loads(request.get_data(parse_form_data=True, cache=False))
+            sourceStream = StringIO.StringIO(payload['contents'].decode('base64'))
+            options = payload.get('options', {})
+        elif request.files:
+            # First check if any files were uploaded
+            sourceStream = request.files['file'].stream
+            # Load any options that may have been provided in options
+            options = json.loads(request.form.get('options', '{}'))
 
-            if request_is_json:
-                # If a JSON payload is there, all data is in the payload
-                payload = json.loads(request.data)
-                source_file.write(payload['contents'].decode('base64'))
-                options = payload.get('options', {})
-            elif request.files:
-                # First check if any files were uploaded
-                source_file.write(request.files['file'].read())
-                # Load any options that may have been provided in options
-                options = json.loads(request.form.get('options', '{}'))
+        # Evaluate argument to run with subprocess
+        args = ['wkhtmltopdf']
 
-            source_file.flush()
+        # Add Global Options
+        if options:
+            for option, value in options.items():
+                args.append('--%s' % option)
+                if value:
+                    args.append('"%s"' % value)
 
-            # Evaluate argument to run with subprocess
-            args = ['wkhtmltopdf']
+        #Pipe source and output to/from STDIN/STDOUT
+        args.append('-')
+        args.append('-')
 
-            # Add Global Options
-            if options:
-                for option, value in options.items():
-                    args.append('--%s' % option)
-                    if value:
-                        args.append('"%s"' % value)
+        cliProc = Popen(args, stdin=PIPE, stdout=PIPE)
+        try:
+            for block in iter(lambda: sourceStream.read(8096), ""):
+                cliProc.stdin.write(block)
+            sourceStream.close()
+            cliProc.stdin.close()
+        except:
+            cliProc.kill()
 
-            # Add source file name and output file name
-            file_name = source_file.name
-            args += [file_name, file_name + ".pdf"]
-
-            # Execute the command using executor
-            execute(' '.join(args))
-
-            # Define a cleanup closure for removing the output file
-            # once the response is closed.
-            def cleanup():
-                os.remove(file_name + '.pdf')
-
-            response = Response(
-                wrap_file(request.environ, open(file_name + '.pdf')),
-                mimetype='application/pdf',
-            )
-            response.call_on_close(cleanup)
-            return response
+        return Response(
+            cliProc.stdout,
+            mimetype='application/pdf',
+        )
 
     """
     Respond to a health check request with a 200 Healthy status.
@@ -120,4 +115,4 @@ class WkHtmlToPdfServer():
 
 if __name__ == '__main__':
     from werkzeug.serving import run_simple
-    run_simple('127.0.0.1', 80, WkHtmlToPdfServer(), use_debugger=True, use_reloader=True)
+    run_simple('127.0.0.1', 5000, WkHtmlToPdfServer(), use_debugger=True, use_reloader=True)
