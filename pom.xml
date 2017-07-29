@@ -17,6 +17,7 @@
         <module>rabbit-image</module>
         <module>redis-image</module>
         <module>secure-tomcat-image</module>
+        <module>wkhtmltopdf-image</module>
     </modules>
 
     <licenses>
