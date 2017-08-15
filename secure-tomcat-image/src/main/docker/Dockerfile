@@ -2,7 +2,7 @@
 # Docker file to build a secure Apache Tomcat 7 image on JRE 7
 ################
 
-FROM tomcat:7-jre7
+FROM tomcat:7-jre8
 
 #Put more secured server.xml
 # Removed server banner
