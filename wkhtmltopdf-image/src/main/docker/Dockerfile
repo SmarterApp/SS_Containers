@@ -9,7 +9,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && \
     apt-get install -y \
-    bash wget build-essential xorg libssl-dev libxrender-dev python-pip
+    bash wget build-essential xorg libssl-dev libxrender-dev python-pip fonts-wqy-microhei ttf-wqy-microhei fonts-wqy-zenhei ttf-wqy-zenhei
 
 RUN pip install werkzeug executor gunicorn futures
 
