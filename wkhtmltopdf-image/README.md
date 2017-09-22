@@ -55,11 +55,11 @@ docker image build src/main/docker
 ## Run
 To start the docker image as a local service run the following command:
 ```bash
-docker run -d -p 300:80 smarterbalanced/wkhtmltopdf-image:latest
+docker run -d -p 8080:80 smarterbalanced/wkhtmltopdf-image:latest
 ```
-This forwards ```localhost:300``` to the docker container port ```80```.
+This forwards ```localhost:8080``` to the docker container port ```80```.
 
-Port ```300``` was arbitrarily selected for this example and can be set to any port that is not in use.
+Port ```8080``` was arbitrarily selected for this example and can be set to any port that is not in use.
 
 Port ```80``` however, is the port smarterbalanced/wkhtmltopdf-image exposes its interface on.
 
@@ -73,7 +73,7 @@ The service then responds with a PDF containing the text "Sample PDF" which is s
 ### Health
 To check that the service is running and healthy you can run:
 ```bash
-curl -v http://localhost:300/health 2>&1 | grep '< HTTP'
+curl -v http://localhost:8080/health 2>&1 | grep '< HTTP'
 ```
 This should print the response:
 ```bash
